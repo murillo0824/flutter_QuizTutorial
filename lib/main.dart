@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import './question.dart';
-import './answer.dart';
+
+import './quiz.dart';
+import './result.dart';
 // import material.dart from flutter to use Widget
 
 void main() => runApp(const MyApp());
@@ -13,53 +14,69 @@ class Question extends StatefulWidget {
 
 class _QuestionState extends State<Question> {
   List<String> questions = ['questions 1', 'questions 2'];
-  List<Map<String, dynamic>> questionsObj = const [
+  final List<Map<String, dynamic>> _questionsObj = [
     {
       'questionText': 'What\'s your favorite color?',
-      'answer': ['Black', 'Red', 'Green', 'White']
+      'answer': [
+        {'text': 'Black', 'score': 1},
+        {'text': 'Red', 'score': 2},
+        {'text': 'Green', 'score': 3},
+        {'text': 'White', 'score': 4}
+      ]
     },
     {
       'questionText': 'What\'s your favorite animal?',
-      'answer': ['Rabbit', 'Snake', 'Elephant', 'Lion']
+      'answer': [
+        {'text': 'animal1', 'score': 1},
+        {'text': 'animal2', 'score': 2},
+        {'text': 'animal3', 'score': 3},
+        {'text': 'animal4', 'score': 4}
+      ]
     },
     {
       'questionText': 'who\'s your teacher?',
-      'answer': ['Murillo', 'max', 'Shoiti', 'Leon']
+      'answer': [
+        {'text': 'name1', 'score': 1},
+        {'text': 'name2', 'score': 2},
+        {'text': 'name3', 'score': 3},
+        {'text': 'name4', 'score': 4}
+      ]
     },
   ];
 
   int _questionIndex = 0;
-  void _answerQuestions() {
+
+  int _totalScore = 0;
+
+  void _answerQuestions(int score) {
+    _totalScore += score;
     setState(() {
       _questionIndex = _questionIndex + 1;
     });
-    if (_questionIndex < questionsObj.length) {
+    if (_questionIndex < _questionsObj.length) {
       print('you have more answer');
     } else {
       print('you don\'t have more answer');
     }
   }
 
+  void _resetQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: _questionIndex < questionsObj.length
-          ? Column(
-              children: [
-                Center(
-                  child: QuestionsText(
-                    questionsObj[_questionIndex]['questionText'],
-                  ),
-                ),
-                ...(questionsObj[_questionIndex]['answer'] as List<String>)
-                    .map((answer) {
-                  return AnswerWidget(_answerQuestions, answer);
-                }).toList()
-              ],
+      child: _questionIndex < _questionsObj.length
+          ? QuizWidget(
+              answerQuestions: _answerQuestions,
+              questionIndex: _questionIndex,
+              questionsObj: _questionsObj,
             )
-          : const Center(
-              child: Text('you ended all questions'),
-            ),
+          : Result(_totalScore, _resetQuiz),
       padding: const EdgeInsets.all(15),
     );
   }
