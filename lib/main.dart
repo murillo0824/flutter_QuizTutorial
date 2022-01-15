@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './question.dart';
+import './answer.dart';
 // import material.dart from flutter to use Widget
 
 void main() => runApp(const MyApp());
@@ -12,39 +13,53 @@ class Question extends StatefulWidget {
 
 class _QuestionState extends State<Question> {
   List<String> questions = ['questions 1', 'questions 2'];
+  List<Map<String, dynamic>> questionsObj = const [
+    {
+      'questionText': 'What\'s your favorite color?',
+      'answer': ['Black', 'Red', 'Green', 'White']
+    },
+    {
+      'questionText': 'What\'s your favorite animal?',
+      'answer': ['Rabbit', 'Snake', 'Elephant', 'Lion']
+    },
+    {
+      'questionText': 'who\'s your teacher?',
+      'answer': ['Murillo', 'max', 'Shoiti', 'Leon']
+    },
+  ];
+
   int _questionIndex = 0;
   void _answerQuestions() {
-    if (_questionIndex == 0) {
-      setState(() {
-        _questionIndex = 1;
-      });
+    setState(() {
+      _questionIndex = _questionIndex + 1;
+    });
+    if (_questionIndex < questionsObj.length) {
+      print('you have more answer');
     } else {
-      setState(() {
-        _questionIndex = 0;
-      });
+      print('you don\'t have more answer');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        children: <Widget>[
-          Center(
-            child: QuestionsText(
-              questions[_questionIndex],
+      child: _questionIndex < questionsObj.length
+          ? Column(
+              children: [
+                Center(
+                  child: QuestionsText(
+                    questionsObj[_questionIndex]['questionText'],
+                  ),
+                ),
+                ...(questionsObj[_questionIndex]['answer'] as List<String>)
+                    .map((answer) {
+                  return AnswerWidget(_answerQuestions, answer);
+                }).toList()
+              ],
+            )
+          : const Center(
+              child: Text('you ended all questions'),
             ),
-          ),
-          ElevatedButton(
-              onPressed: _answerQuestions, child: const Text("Answer1")),
-          ElevatedButton(
-              onPressed: _answerQuestions, child: const Text("Answer2")),
-          ElevatedButton(
-              onPressed: _answerQuestions, child: const Text("Answer3")),
-          ElevatedButton(
-              onPressed: _answerQuestions, child: const Text("Answer4")),
-        ],
-      ),
       padding: const EdgeInsets.all(15),
     );
   }
